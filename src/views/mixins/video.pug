@@ -2,9 +2,6 @@ mixin video(infoList)
     div
         h4
             a(href=`/videos/${infoList.id}`)=infoList.title
-        ul
-            li Rating  #{infoList.rating}
-            li Comments #{infoList.comments} 
-            li Create AT #{infoList.createdAt} 
-            li views #{infoList.views} 
-            li id #{infoList.id}
+        p=infoList.description
+        small=infoList.createdAt
+        hr
