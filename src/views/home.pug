@@ -1,0 +1,11 @@
+extends base
+include mixins/video
+
+block content 
+    h2 Welcome To HELLICAT FILM
+    ul
+    each videoInfo in videos
+        +video(videoInfo)
+    else 
+        li Sorry nothing Found.
+        
