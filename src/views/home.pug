@@ -1,0 +1,14 @@
+extends base.pug
+
+//- mixin을 하기 위해서는 +를 넣어주어야 하며 이어 function이름을 넣어줘야한다. 
+//- 후에 include 를 통한 mixin을 불러와준다. ex) foldername/filename
+include mixins/video
+
+block content 
+    h2 Welcome Wetube!!
+
+    
+    each videoList in videos 
+        +video(videoList)
+    else 
+        li Sorry nothing found

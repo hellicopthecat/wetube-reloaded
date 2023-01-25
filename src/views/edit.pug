@@ -1,0 +1,13 @@
+extends base.pug
+
+block content
+    h2 Edit Video
+
+    form(method="POST")
+        input(name="title" type="text" value=video.title placeholder="Title" maxlength="40" required)
+        input(name="description" type="text" value=video.description placeholder="Description" minlength="10" required)
+        input(name="hashtags" type="text" value=video.hashtags.join() placeholder="Hashtags, separated by comma" required)
+        input(type="submit" value="Upload Video")
+        input(type="button" value="Cancel" onClick="location.href='/'")
+            
+
