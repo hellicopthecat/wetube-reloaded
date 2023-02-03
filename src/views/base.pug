@@ -1,7 +1,7 @@
 doctype html 
 html(lang="en")
     head 
-        title #{pageTitle} | Wetube
+        title #{pageTitle} | #{siteName}
         link(rel="stylesheet" href="https://unpkg.com/mvp.css@1.12/mvp.css")
     body
         header  
@@ -13,12 +13,16 @@ html(lang="en")
                         a(href="/videos/upload") Upload
                     li 
                         a(href="/search") Search
-                    if (username !== true )
+                    if loggedIn 
                         li 
-                            a(href="/login") login
+                            a(href="/logout") Log out    
+                        li 
+                            a(href="/profile") #{loggedInUser.name}의 Profile
                     else
                         li 
-                            a(href="/logout") log out    
+                            a(href="/login") Login
+                        li 
+                            a(href="/join") Join
             h1=pageTitle
         main
             block content
