@@ -61,7 +61,7 @@ export const postLogin = async (req, res) => {
   const {username, password} = req.body;
   const pageTitle = "LOG IN";
   //check if account exists
-  const user = await UserModel.findOne({username});
+  const user = await UserModel.findOne({username, socialOnly: false});
   if (!user) {
     return res.status(400).render("login", {
       pageTitle,
@@ -100,9 +100,9 @@ export const finishGithubLogin = async (req, res) => {
     client_secret: process.env.GH_SECRET,
     code: req.query.code,
   };
-
   const params = new URLSearchParams(config).toString();
   const finalUrl = `${baseUrl}?${params}`;
+
   const tokenRequest = await (
     await fetch(finalUrl, {
       method: "POST",
@@ -134,14 +134,11 @@ export const finishGithubLogin = async (req, res) => {
       return res.redirect("/login");
     }
 
-    const existingUser = await UserModel.findOne({email: emailObj.email});
-    if (existingUser) {
-      req.session.loggedIn = true;
-      req.session.user = existingUser;
-      return res.redirect("/");
-    } else {
+    let user = await UserModel.findOne({email: emailObj.email});
+    if (!user) {
       //create an account
-      const user = await UserModel.create({
+      user = await UserModel.create({
+        avatarUrl: userData.avatar_Url,
         name: userData.name,
         socialOnly: true,
         username: userData.login,
@@ -149,18 +146,89 @@ export const finishGithubLogin = async (req, res) => {
         email: emailObj.email,
         location: userData.location,
       });
-      req.session.loggedIn = true;
-      req.session.user = user;
-      return res.redirect("/");
     }
+    req.session.loggedIn = true;
+    req.session.user = user;
+    return res.redirect("/");
   } else {
     return res.redirect("/login");
   }
 };
 
-export const logout = (req, res) => res.send("log out");
+export const kakaoLogin = (req, res) => {
+  const baseUrl = "https://kauth.kakao.com/oauth/authorize";
+  const config = {
+    client_id: process.env.KAKAO_REST_API_KEY,
+    response_type: "code",
+    redirect_uri: "http://localhost:4000/users/kakao/finish",
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  return res.redirect(finalUrl);
+};
+
+export const finishKakaoLogin = async (req, res) => {
+  const baseUrl = "https://kauth.kakao.com/oauth/token";
+  const config = {
+    grant_type: "authorization_code",
+    client_id: process.env.KAKAO_REST_API_KEY,
+    redirect_url: "http://localhost:4000/users/kakao/finish",
+    code: req.query.code,
+    client_secret: process.env.KAKAO_SECRET,
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+
+  const tokenRequest = await (
+    await fetch(finalUrl, {
+      method: "POST",
+    })
+  ).json();
+
+  if ("access_token" in tokenRequest) {
+    const {access_token} = tokenRequest;
+    const apiUrl = "https://kapi.kakao.com/v2/user/me";
+    const userData = await (
+      await fetch(`${apiUrl}`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+    ).json();
+
+    const kakaoAccount = userData.kakao_account;
+    const kakaoProfile = kakaoAccount.profile;
+
+    if (
+      kakaoAccount.is_email_valid === false ||
+      kakaoAccount.is_eamil_verified === false
+    ) {
+      return res.redirect("/login");
+    }
+    let user = await UserModel.findOne({email: kakaoAccount.email});
+    if (!user) {
+      user = await UserModel.create({
+        name: kakaoProfile.nickname,
+        socialOnly: true,
+        username: kakaoProfile.nickname,
+        email: kakaoAccount.email,
+        password: "",
+        avatarUrl: kakaoProfile.profile_image_url,
+        location: "",
+      });
+    }
+    req.session.loggedIn = true;
+    req.session.user = user;
+    return res.redirect("/");
+  } else {
+    return res.redirect("/login");
+  }
+};
+export const logout = (req, res) => {
+  req.session.destroy();
+  return res.redirect("/");
+};
 
 export const see = (req, res) => res.send("see my porfile");
-
 export const editUser = (req, res) => res.send("user");
 export const deleteUser = (req, res) => res.send("delete user");
