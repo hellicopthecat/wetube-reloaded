@@ -1,6 +1,6 @@
 mixin videoList(video)
     h4
-        a(href=`/videos/${video.id}/watch`) #{video.title}
+        a(href=`/videos/${video.id}`) #{video.title}
     ul 
         li  Rating #{video.rate}
         li  Created At #{video.createdAt}
