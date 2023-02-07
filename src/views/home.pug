@@ -1,0 +1,9 @@
+extends base
+include mixins/mixins
+
+block contents 
+    ul
+    each video in videos
+        +videoList(video)
+    else 
+        p "Video Not Found"

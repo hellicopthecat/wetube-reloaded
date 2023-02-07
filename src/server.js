@@ -1,9 +1,18 @@
 import express from "express";
+import morgan from "morgan";
 
-const Express = require("express");
+import rootRouter from "./router/rootrouter";
+import videoRouter from "./router/videorouter";
+import userRouter from "./router/userrouter";
 const app = express();
-const port = 4000;
 
-const handleServer = () => console.log(`✅ Server is on localhost:${port}`);
+app.set("view engine", "pug");
+app.set("views", "./src/views");
 
-app.listen(port, handleServer);
+app.use(morgan("dev"));
+
+app.use("/", rootRouter);
+app.use("/videos", videoRouter);
+app.use("/user", userRouter);
+
+export default app;

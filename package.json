@@ -2,9 +2,9 @@
   "name": "wetube",
   "version": "1.0.0",
   "description": "wetube reloaded",
-  "main": "server.js",
+  "main": "init.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node src/server.js"
+    "dev": "nodemon --exec babel-node src/init.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,10 @@
   "homepage": "https://github.com/hellicopthecat/wetube-reloaded#readme",
   "dependencies": {
     "express": "^4.18.2",
-    "nodemon": "^2.0.20"
+    "mongoose": "^6.9.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.20",
+    "pug": "^3.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",

@@ -1,0 +1,10 @@
+extends base
+
+block contents 
+    form(method="POST")
+        input(name="title" type="text" placeholder=" VIDEO TITLE " value=video.title required)
+        input(name="description" type="text" placeholder=" Description Video" value=video.description required)
+        input(name="createAt" type="text" placeholder="Write on Create At" value=video.createdAt required)
+        input(name="hashtags" type="text" placeholder="Split by Comma" value=video.hashtags required)
+        input(type="submit" value="SAVE")
+        input(type="button" value="CANCEL" onclick="location.href=`/`")
