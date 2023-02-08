@@ -26,18 +26,25 @@ export const editVideo = async (req, res) => {
   if (!video) {
     return res.render("404", {pageTitle: "Wrong Access"});
   }
-  return res.render("edit", {video});
+  return res.render("edit", {pageTitle: "Edit Video", video});
 };
 
-export const postVideo = async (req, res) => {
+export const postEditVideo = async (req, res) => {
   // 내가요청한 파라미터 아이디
   const {id} = req.params;
   const video = await VideoModel.findById(id);
   // post 후 찾는 대상
-  const {title, description, createAt, hashtags} = req.body;
+  const {title, description, createdAt, hashtags} = req.body;
+
   if (!video) {
     return res.render("404", {pageTitle: "Wrong Access"});
   }
+  await VideoModel.findByIdAndUpdate(id, {
+    title,
+    description,
+    createdAt,
+    hashtags: VideoModel.formatHashtags(hashtags),
+  });
   return res.redirect(`/videos/${id}`);
 };
 
@@ -52,8 +59,7 @@ export const postUpload = async (req, res) => {
       title,
       description,
       createdAt,
-      // hashtags는 comma로 split하고 단어마다 map을 통해 객체화 하고 객체마다 구성된 단어로 조합한다.
-      hashtags: hashtags.split(",").map((word) => `#${word}`),
+      hashtags: VideoModel.formatHashtags(hashtags),
     });
     return res.redirect("/");
   } catch (error) {
@@ -65,5 +71,15 @@ export const postUpload = async (req, res) => {
 };
 
 export const deleteVideo = (req, res) => {
-  return res.send("delete video");
+  return res.render("delete", {pageTitle: "Delete Video"});
+};
+
+export const postDelete = async (req, res) => {
+  const {id} = req.params;
+  await VideoModel.findByIdAndDelete(id);
+  return res.redirect("/");
+};
+
+export const search = (req, res) => {
+  res.render("search", {pageTitle: "SEARCH"});
 };

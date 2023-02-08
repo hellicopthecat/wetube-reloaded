@@ -2,8 +2,8 @@ mixin videoList(video)
     h4
         a(href=`/videos/${video.id}`) #{video.title}
     ul 
-        li  Rating #{video.rate}
         li  Created At #{video.createdAt}
         li  Hashtags #{video.hashtags}
-        li  Views #{video.view}
+        li  Rating #{video.rate}
+        li  #{video.views} #{video.views === 1 ? "views" : "view"}
         li  ID No.#{video.id}

@@ -1,0 +1,10 @@
+extends base
+include mixins/mixins
+
+block contents 
+    form(method="GET")
+        input(name="searchkey" type="text" placeholder="Input to Search")
+        input(type="submit" value="Search")
+        input(type="button" value="CANCEL" onclick="location.href=`/`")
+    div
+    
