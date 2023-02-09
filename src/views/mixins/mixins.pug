@@ -1,9 +1,9 @@
-mixin videoList(video)
+mixin videoList(info)
     h4
-        a(href=`/videos/${video.id}`) #{video.title}
-    ul 
-        li  Created At #{video.createdAt}
-        li  Hashtags #{video.hashtags}
-        li  Rating #{video.rate}
-        li  #{video.views} #{video.views === 1 ? "views" : "view"}
-        li  ID No.#{video.id}
+        a(href=`/videos/${info.id}`) #{info.title}
+    p=info.description
+    ul      
+        each hashtags in info.hashtags
+            li=hashtags 
+    small=info.createdAt
+    hr 
