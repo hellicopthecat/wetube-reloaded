@@ -3,11 +3,12 @@ extends base
 block contents
     h3 #{video.title}
     span
-        li  Created At #{video.createdAt}
-        li  Hashtags #{video.hashtags}
+        li=video.description
+        li=video.createdAt
+        li=video.hashtags
         li  Views #{video.view}
         li  Rating #{video.rate} / 5
-        li  ID No.#{video.id}
+       
     br
     a(href=`/videos/${video.id}/edit`) Edit Video &rarr; 
     br

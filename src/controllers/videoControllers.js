@@ -1,4 +1,4 @@
-import VideoModel from "../models/videomodels";
+import VideoModel from "../models/Videomodels";
 
 export const home = async (req, res) => {
   const videos = await VideoModel.find({}).sort({createdAt: "desc"});
@@ -24,7 +24,7 @@ export const editVideo = async (req, res) => {
   // mongoose에서 id를 통해 대상을 찾음
   const video = await VideoModel.findById(id);
   if (!video) {
-    return res.render("404", {pageTitle: "Wrong Access"});
+    return res.status(404).render("404", {pageTitle: "Wrong Access"});
   }
   return res.render("edit", {pageTitle: "Edit Video", video});
 };
@@ -32,12 +32,18 @@ export const editVideo = async (req, res) => {
 export const postEditVideo = async (req, res) => {
   // 내가요청한 파라미터 아이디
   const {id} = req.params;
-  const video = await VideoModel.findById(id);
-  // post 후 찾는 대상
   const {title, description, createdAt, hashtags} = req.body;
+  console.log(req.body);
+  // post 후 찾는 대상
+  const video = await VideoModel.exists({_id: id});
+  // post에서는 findById를 통한 전체적인 video를 찾을 필요가 없다. 따라서
+  // exists라는 함수를 통해 존재의 유무를 Boolean으로 확인할 수 있다.
+  // exists는 Mongoose 문서에 보면 id를 받지 않고 filter를 받는다.
+  // 그래서 exists()에  {조건} 을 넣을 것이다.
+  // mongo데이터에 object _id가 있고 req.params.id와 같은 경우를 찾는 것이다.
 
   if (!video) {
-    return res.render("404", {pageTitle: "Wrong Access"});
+    return res.status(404).render("404", {pageTitle: "Wrong Access"});
   }
   await VideoModel.findByIdAndUpdate(id, {
     title,
@@ -63,7 +69,7 @@ export const postUpload = async (req, res) => {
     });
     return res.redirect("/");
   } catch (error) {
-    return res.render("upload", {
+    return res.status(400).render("upload", {
       pageTitle: "Upload Video",
       errorMessage: error._message,
     });
