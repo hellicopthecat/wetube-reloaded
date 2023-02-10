@@ -27,7 +27,9 @@ export const postJoin = async (req, res) => {
       // 브라우져는 아이디와 비번을 저장하려고 한다. 이를 방지하기 위해 우리가 렌더링할 페이지에 에러코드를 넣어줘야함.
     });
   }
-  /* [2] const usernameExist = await UserModel.exists({username});
+
+  /* [2] 
+  const usernameExist = await UserModel.exists({username});
   if (usernameExist) {
     return res.render("join", {
       pageTitle,
@@ -47,7 +49,7 @@ export const postJoin = async (req, res) => {
   mongodb의 $or operator를 사용할 수 있다.
   $or operator는 각 조건이 true일 때 실행되게 만들 수 있다.
   const *** = await UserModel.exitst({username, email})이라 함은 username과 email을 동시에 가진
-  user만 체크할 수 있기 때문에 $or은 사용중인 username과 사용되지 않는 email을 가진 UserModel을 찾을 수 있다. */
+  user만 체크할 수 있기 때문에 $or은 사용중인 username과 사용되지 않는 email을 가진 UserModel을 찾을 수 있다.  */
 
   try {
     await UserModel.create({
@@ -99,6 +101,16 @@ export const postLogin = async (req, res) => {
       errorMessage: "Password is Wrong",
     });
   }
-  //[3] 로그인으로 인한 쿠키와 세션의 분배
+  // [3] 로그인으로 인한 cookie와 session의 분배
+  // user를 기억하기 위해서는 cookie를 주어야한다. cookie를 이해하기 위해서는 먼저 session을 알아야하는데
+  // session은 browser와 back-end 사이의 memory, history같은 것이다.
+  // 이것이 작동하려면 browser와 back-end가 서로에 대한 정보를 가지고 있어야 한다.
+  // 왜냐하면 로그인 페이지에서 http 요청을 하면 요청이 처리되고 끝나는데, 이때 back-end는 아무것도 할수 없다.
+  // 즉, 요청을 받고 처리를 끝내면 서버는 누가 요청을 보냈는지 잊어버리고 서버가 더이상 필요는 브라우저도 잊음.
+  // 이것을 stateless(무상태)라고 한다.
+  // 그래서 우리는 유저에게 유저가 백엔드에 뭔가 요청 할 때마다 누가 요청하는 알수 있게 어떤 정보를 남겨줘야한다.
+  // 유저에게 텍스트를 주는 이것을 쿠키...
+  // express-session이라는 것을 설치해야하는데 이 middlewear는 express에서 세션을 처리할수 있게 한다.
+  // 이것을 server.js에 import 한다. session 설정은 server.js에 기술
   return res.redirect("/");
 };
