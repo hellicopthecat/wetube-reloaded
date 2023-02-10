@@ -4,7 +4,11 @@ import session from "express-session";
 import rootRouter from "./router/rootRouter";
 import videoRouter from "./router/videoRouter";
 import userRouter from "./router/userRouter";
+import {localsMiddleware} from "./middlewares";
+
 const app = express();
+
+//app.set , app.use의 순서는 꼭 지켜야한다. 순서만달라도 에러가 난다.
 
 app.set("view engine", "pug");
 app.set("views", "./src/views");
@@ -27,6 +31,7 @@ app.use(
   })
 );
 
+app.use(localsMiddleware);
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
 app.use("/user", userRouter);

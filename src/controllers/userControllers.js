@@ -101,7 +101,7 @@ export const postLogin = async (req, res) => {
       errorMessage: "Password is Wrong",
     });
   }
-  // [3] 로그인으로 인한 cookie와 session의 분배
+  /* // [3] 로그인으로 인한 cookie와 session의 분배
   // user를 기억하기 위해서는 cookie를 주어야한다. cookie를 이해하기 위해서는 먼저 session을 알아야하는데
   // session은 browser와 back-end 사이의 memory, history같은 것이다.
   // 이것이 작동하려면 browser와 back-end가 서로에 대한 정보를 가지고 있어야 한다.
@@ -111,6 +111,12 @@ export const postLogin = async (req, res) => {
   // 그래서 우리는 유저에게 유저가 백엔드에 뭔가 요청 할 때마다 누가 요청하는 알수 있게 어떤 정보를 남겨줘야한다.
   // 유저에게 텍스트를 주는 이것을 쿠키...
   // express-session이라는 것을 설치해야하는데 이 middlewear는 express에서 세션을 처리할수 있게 한다.
-  // 이것을 server.js에 import 한다. session 설정은 server.js에 기술
+  // 이것을 server.js에 import 한다. session 설정은 server.js에 기술 */
+
+  /* // [4] 유저가 로그하면 그 유저에 대한 정보를 세션에 담을거다 
+  // 각 유저마다 서로 다른 req.session object를 가지고 있다는걸 기억하자 */
+  req.session.loggedIn = true;
+  req.session.user = user;
+  // 이렇게 하면 세션에 정보를 추가한다.
   return res.redirect("/");
 };
