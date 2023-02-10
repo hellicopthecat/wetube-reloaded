@@ -1,8 +1,19 @@
 extends base
 
 block contents 
+    if errorMessage 
+        span=errorMessage
     form(method="POST")
         input(name="username" type="text" placeholder="Insert your ID" minlength=4 required)
         input(name="password" type="password" placeholder="password" minlength=4 required)
         input(type="submit" value="Log In")
         input(type="button" value="CANCEL" onclick="location.href=`/`")
+    br
+    div
+        span Don't have an account?
+        br
+        a(href="/join") Create Account &rarr;
+        br
+        a(href="") Create Account with Github &rarr;
+        br
+        a(href="") Create Account with Kakao &rarr;
