@@ -80,15 +80,9 @@ export const getLogin = (req, res) => {
 };
 export const postLogin = async (req, res) => {
   const {username, password} = req.body;
-<<<<<<< HEAD
-  const pageTitle = "LOG IN";
-  //check if account exists
-  const user = await UserModel.findOne({username, socialOnly: false});
-=======
   const pageTitle = "Log In";
   // [1] account의 존재(exists)
   const user = await UserModel.findOne({username});
->>>>>>> practice1
   if (!user) {
     return res.status(400).render("login", {
       pageTitle,
@@ -161,13 +155,9 @@ export const postGithubLogin = async (req, res) => {
   };
   const params = new URLSearchParams(config).toString();
   const finalUrl = `${baseUrl}?${params}`;
-<<<<<<< HEAD
-
-=======
   //[2]
   // log in 과 join 과 달리 redirect를 해주는 것이 아닌 post request를 보내기만 할 것이다.
   // 여기서는 fetch문을 사용할 것이다.
->>>>>>> practice1
   const tokenRequest = await (
     await fetch(finalUrl, {
       //우선 fetch를 통해 데이터를 받아오고
@@ -200,122 +190,9 @@ export const postGithubLogin = async (req, res) => {
         },
       })
     ).json();
-<<<<<<< HEAD
-    const emailData = await (
-      await fetch(`${apiUrl}/user/emails`, {
-        headers: {Authorization: `token ${access_token}`},
-      })
-    ).json();
-
-    const emailObj = emailData.find(
-      (email) => email.primary === true && email.verified === true
-    );
-    if (!emailObj) {
-      return res.redirect("/login");
-    }
-
-    let user = await UserModel.findOne({email: emailObj.email});
-    if (!user) {
-      //create an account
-      user = await UserModel.create({
-        avatarUrl: userData.avatar_Url,
-        name: userData.name,
-        socialOnly: true,
-        username: userData.login,
-        password: "",
-        email: emailObj.email,
-        location: userData.location,
-      });
-    }
-    req.session.loggedIn = true;
-    req.session.user = user;
-    return res.redirect("/");
-=======
     console.log(userRequest);
     //[5] 위의 디버깅으로 토대로 user의 info를 가져올수 있지만 email이 null이 되었다. 이는 email이 없거나 private라는 뜻이다.
->>>>>>> practice1
   } else {
     return res.redirect("/login");
   }
 };
-<<<<<<< HEAD
-
-export const kakaoLogin = (req, res) => {
-  const baseUrl = "https://kauth.kakao.com/oauth/authorize";
-  const config = {
-    client_id: process.env.KAKAO_REST_API_KEY,
-    response_type: "code",
-    redirect_uri: "http://localhost:4000/users/kakao/finish",
-  };
-  const params = new URLSearchParams(config).toString();
-  const finalUrl = `${baseUrl}?${params}`;
-  return res.redirect(finalUrl);
-};
-
-export const finishKakaoLogin = async (req, res) => {
-  const baseUrl = "https://kauth.kakao.com/oauth/token";
-  const config = {
-    grant_type: "authorization_code",
-    client_id: process.env.KAKAO_REST_API_KEY,
-    redirect_url: "http://localhost:4000/users/kakao/finish",
-    code: req.query.code,
-    client_secret: process.env.KAKAO_SECRET,
-  };
-  const params = new URLSearchParams(config).toString();
-  const finalUrl = `${baseUrl}?${params}`;
-
-  const tokenRequest = await (
-    await fetch(finalUrl, {
-      method: "POST",
-    })
-  ).json();
-
-  if ("access_token" in tokenRequest) {
-    const {access_token} = tokenRequest;
-    const apiUrl = "https://kapi.kakao.com/v2/user/me";
-    const userData = await (
-      await fetch(`${apiUrl}`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      })
-    ).json();
-
-    const kakaoAccount = userData.kakao_account;
-    const kakaoProfile = kakaoAccount.profile;
-
-    if (
-      kakaoAccount.is_email_valid === false ||
-      kakaoAccount.is_eamil_verified === false
-    ) {
-      return res.redirect("/login");
-    }
-    let user = await UserModel.findOne({email: kakaoAccount.email});
-    if (!user) {
-      user = await UserModel.create({
-        name: kakaoProfile.nickname,
-        socialOnly: true,
-        username: kakaoProfile.nickname,
-        email: kakaoAccount.email,
-        password: "",
-        avatarUrl: kakaoProfile.profile_image_url,
-        location: "",
-      });
-    }
-    req.session.loggedIn = true;
-    req.session.user = user;
-    return res.redirect("/");
-  } else {
-    return res.redirect("/login");
-  }
-};
-export const logout = (req, res) => {
-  req.session.destroy();
-  return res.redirect("/");
-};
-
-export const see = (req, res) => res.send("see my porfile");
-export const editUser = (req, res) => res.send("user");
-export const deleteUser = (req, res) => res.send("delete user");
-=======
->>>>>>> practice1
