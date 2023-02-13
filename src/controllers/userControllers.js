@@ -1,4 +1,5 @@
 import UserModel from "../models/Usermodels";
+import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
 export const getJoin = (req, res) => {
@@ -142,6 +143,8 @@ export const githubLogin = (req, res) => {
 };
 export const postGithubLogin = async (req, res) => {
   //Github에서 받은 토큰을 access토큰으로 바꿔줘야한다.
+
+  //[1]
   const baseUrl = "https://github.com/login/oauth/access_token";
   const config = {
     client_id: process.env.CLIENT_ID,
@@ -152,18 +155,44 @@ export const postGithubLogin = async (req, res) => {
   };
   const params = new URLSearchParams(config).toString();
   const finalUrl = `${baseUrl}?${params}`;
+  //[2]
   // log in 과 join 과 달리 redirect를 해주는 것이 아닌 post request를 보내기만 할 것이다.
   // 여기서는 fetch문을 사용할 것이다.
-  const data = await fetch(finalUrl, {
-    //우선 fetch를 통해 데이터를 받아오고
-    method: "POST",
-    headers: {
-      Accept: "application / json",
-      //JSON을 return받기 위해 위 headers에 작성한 것을 잊으면 안된다.
-      //mdn fetch문서 참조
-    },
-  });
-  const json = await data.json();
+  const tokenRequest = await (
+    await fetch(finalUrl, {
+      //우선 fetch를 통해 데이터를 받아오고
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        //application/json이것은 붙어써야함
+        //JSON을 return받기 위해 위 headers에 작성한 것을 잊으면 안된다.
+        //mdn fetch문서 참조 여기서 headers는 HTTP headers의 관한 내용으로 클라이어느와 서버가 request(or response)로
+        //부가적인 정보를 전송할 수 있도록 한다. Accept는 돌려줄 타입에 대해 서버에게 알려주는 역할 MIME타입
+        //MIME타입은 웹에서 사용되는 확장라고 생각하면 되고 type/subtype으로 구성되어 있다.
+        //이를 디버깅하게 되면 fetch가 안써지는데 nodejs에는 fetch 기능이 없어 npmjs에 가서 node-fetch를 설치
+        // 사용하고자 하는 곳에 import  ** 현 NodeJS 18.0.0 부터는 fetch 기능이 탑재 되있음. 따라서 설치 안해도 됨
+        // 하지만 본인은 19.6.0 제일 최신을 쓰고 있어 아직 업데이트가 되지 않았음 따라서 node-fetch@2.6.7을 설치
+      },
+    })
+  ).json();
+  // const json = await data.json();
+  // [4] data.json와 const tokenRequest에서 두 문장으로 await할 필요 없이 한문장으로 await을 작성
   // 그 데이터에서 JSON을 추출할것이다.
-  console.log(json);
+  //[3]
+  //access_token을 갖고 api에 접근한다. access_token을 가지고 user의 정보를 얻을 수 있다.
+  if ("access_token" in tokenRequest) {
+    // access api
+    const {access_token} = tokenRequest;
+    const userRequest = await (
+      await fetch("https://api.github.com/user", {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+    console.log(userRequest);
+    //[5] 위의 디버깅으로 토대로 user의 info를 가져올수 있지만 email이 null이 되었다. 이는 email이 없거나 private라는 뜻이다.
+  } else {
+    return res.redirect("/login");
+  }
 };
