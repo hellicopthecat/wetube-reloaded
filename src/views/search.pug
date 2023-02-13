@@ -1,10 +1,13 @@
-extends base.pug
-include mixins/video
+extends base
+include mixins/mixins
 
-block content 
+block contents 
     form(method="GET")
-        input(name="keyword" placeholder="Seach by Title", type="text")
-        input(type="submit" value="Search Now")
+        input(name="keyword" type="text" placeholder="Input to Search")
+        input(type="submit" value="Search")
+        input(type="button" value="CANCEL" onclick="location.href=`/`")
     div
-        each video in videoWhatFind
-            +video(video)
+        each video in videofind
+            +videoList(video)
+        else 
+            p Search Video

@@ -1,11 +1,15 @@
-extends base.pug
+extends base
 
-block content 
-    h1=video.title
-    p=video.description
-    small=video.createdAt
-    h3 #{video.views} #{video.views  === 1 ? "view" : "views"}
-    //- inline if문 video.views가 1과 같다면 view 그것이 아니라면 views 
-    a(href=`${video.id}/edit`) Edit Video &rarr;
+block contents
+    h3 #{video.title}
+    span
+        li=video.description
+        li=video.createdAt
+        li=video.hashtags
+        li  Views #{video.view}
+        li  Rating #{video.rate} / 5
+       
     br
-    a(href=`${video.id}/delete`) Delete Video &rarr;
+    a(href=`/videos/${video.id}/edit`) Edit Video &rarr; 
+    br
+    a(href=`/videos/${video.id}/delete`) Delete Video &rarr;

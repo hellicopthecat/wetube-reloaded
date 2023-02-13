@@ -1,13 +1,13 @@
-extends base.pug
+extends base
 
-block content
-    h2 Edit Video
-
+block contents 
+    h2 Update Video
+    if errorMessage 
+        span=errorMessage
     form(method="POST")
-        input(name="title" type="text" value=video.title placeholder="Title" maxlength="40" required)
-        input(name="description" type="text" value=video.description placeholder="Description" minlength="10" required)
-        input(name="hashtags" type="text" value=video.hashtags.join() placeholder="Hashtags, separated by comma" required)
-        input(type="submit" value="Upload Video")
-        input(type="button" value="Cancel" onClick="location.href='/'")
-            
-
+        input(name="title" type="text" placeholder=" VIDEO TITLE " maxlength=20 value=video.title required)
+        input(name="description" type="text" placeholder=" Description Video" minlength=10 value=video.description required)
+        input(name="createAt" type="text" placeholder="Write on Create At" value=video.createdAt required)
+        input(name="hashtags" type="text" placeholder="Split by Comma" value=video.hashtags.join() required)
+        input(type="submit" value="SAVE")
+        input(type="button" value="CANCEL" onclick="location.href=`/`")

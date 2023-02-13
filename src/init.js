@@ -1,12 +1,10 @@
 import "dotenv/config";
 import "./db";
-import "./models/Video";
-import "./models/User";
+import "./models/Videomodels";
+import "./models/Usermodels";
 import app from "./server";
 
-const PORT = 4000;
+const port = 4000;
 
-const handleServer = () =>
-  console.log(`✅ The Server is live on port http://localhost:${PORT} ✅`);
-
-app.listen(PORT, handleServer);
+const handleServer = () => console.log(`✅ Server is on localhost:${port}`);
+app.listen(port, handleServer);
