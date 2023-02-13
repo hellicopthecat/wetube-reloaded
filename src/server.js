@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import rootRouter from "./router/rootRouter";
 import videoRouter from "./router/videoRouter";
 import userRouter from "./router/userRouter";
@@ -28,8 +29,13 @@ app.use(
     secret: "what",
     resave: true,
     saveUninitialized: true,
+    store: MongoStore.create({mongoUrl: `mongodb://127.0.0.1:27017/wetube`}),
   })
 );
+// session data는 쿠키 안에 저장이 되지 않는다. session data는 서버 쪽에 저장이 된다.
+// 주의사항으론 서버에 저장되는 default session storage는 memory store고 실제 사용하기 위해 있는것은 아니다.
+// 그래서 우리는 session store를 사용해야 한다. 문서를 확인해서 설치 할것을 찾아야한다.
+// 현재 mongoDB를 사용하기 때문에 connect-mongo를 설치해준다. 설치후 import하고 mongoDB와 연결해 session스토어를 만들어준다.
 
 // app.use((req, res, next) => {
 //   console.log(res);
