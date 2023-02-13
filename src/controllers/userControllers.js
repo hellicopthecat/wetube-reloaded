@@ -94,7 +94,7 @@ export const postLogin = async (req, res) => {
   // 이를 위해 bcrypt에 내장되어 있는 compare function을 사용 * bcrypt문서 To check a password: 참조
   // compare을 사용하기 위해 import한다.
   const ok = await bcrypt.compare(password, user.password);
-  // compare에는 인풋으로 넘어온 데이터 그리고 해싱된 password를 넣어준다.
+  // compare에는 인풋으로 넘어온 데이터 그리고 해싱된 password를 넣어 비교해준다.
   if (!ok) {
     return res.status(400).render("login", {
       pageTitle,
@@ -102,21 +102,23 @@ export const postLogin = async (req, res) => {
     });
   }
   /* // [3] 로그인으로 인한 cookie와 session의 분배
-  // user를 기억하기 위해서는 cookie를 주어야한다. cookie를 이해하기 위해서는 먼저 session을 알아야하는데
-  // session은 browser와 back-end 사이의 memory, history같은 것이다.
-  // 이것이 작동하려면 browser와 back-end가 서로에 대한 정보를 가지고 있어야 한다.
-  // 왜냐하면 로그인 페이지에서 http 요청을 하면 요청이 처리되고 끝나는데, 이때 back-end는 아무것도 할수 없다.
-  // 즉, 요청을 받고 처리를 끝내면 서버는 누가 요청을 보냈는지 잊어버리고 서버가 더이상 필요는 브라우저도 잊음.
-  // 이것을 stateless(무상태)라고 한다.
-  // 그래서 우리는 유저에게 유저가 백엔드에 뭔가 요청 할 때마다 누가 요청하는 알수 있게 어떤 정보를 남겨줘야한다.
-  // 유저에게 텍스트를 주는 이것을 쿠키...
-  // express-session이라는 것을 설치해야하는데 이 middlewear는 express에서 세션을 처리할수 있게 한다.
-  // 이것을 server.js에 import 한다. session 설정은 server.js에 기술 */
+    // user를 기억하기 위해서는 cookie를 주어야한다. cookie를 이해하기 위해서는 먼저 session을 알아야하는데
+    // session은 browser와 back-end 사이의 memory, history같은 것이다.
+    // 이것이 작동하려면 browser와 back-end가 서로에 대한 정보를 가지고 있어야 한다.
+    // 왜냐하면 로그인 페이지에서 http 요청을 하면 요청이 처리되고 끝나는데, 이때 back-end는 아무것도 할수 없다.
+    // 즉, 요청을 받고 처리를 끝내면 서버는 누가 요청을 보냈는지 잊어버리고 서버가 더이상 필요는 브라우저도 잊음.
+    // 이것을 stateless(무상태)라고 한다.
+    // 그래서 우리는 유저에게 유저가 백엔드에 뭔가 요청 할 때마다 누가 요청하는 알수 있게 어떤 정보를 남겨줘야한다.
+    // 유저에게 텍스트를 주는 이것을 쿠키...
+    // express-session이라는 것을 설치해야하는데 이 middlewear는 express에서 세션을 처리할수 있게 한다.
+    // 이것을 server.js에 import 한다. session 설정은 server.js에 기술
+  */
 
   /* // [4] 유저가 로그하면 그 유저에 대한 정보를 세션에 담을거다 
-  // 각 유저마다 서로 다른 req.session object를 가지고 있다는걸 기억하자 */
+// 각 유저마다 서로 다른 req.session object를 가지고 있다는걸 기억하자 */
   req.session.loggedIn = true;
   req.session.user = user;
   // 이렇게 하면 세션에 정보를 추가한다.
+  // session에 loggedIn을 true로 저장했고 user는 usermodel에서 찾은 user를 추가했다.
   return res.redirect("/");
 };

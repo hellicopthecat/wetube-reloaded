@@ -5,11 +5,11 @@ export const localsMiddleware = (req, res, next) => {
     res.locals.loggedIn = true;
   }
   // res.locals.loggedIn = Boolean(req.session.loggedIn) 위와 같은 내용이다.
+  // console.log(res.locals);
 
   res.locals.loggedInUser = req.session.user;
-  /* console.log(req.session);
-  console.log(res.locals);
-  console.log(res.locals.loggedInUser); */
+  // console.log(req.session);
+  // console.log(res.locals.loggedInUser);
 
   res.locals.siteName = "Wetube";
   next();

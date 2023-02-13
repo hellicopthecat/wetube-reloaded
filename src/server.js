@@ -31,6 +31,10 @@ app.use(
   })
 );
 
+// app.use((req, res, next) => {
+//   console.log(res);
+// });
+
 app.use(localsMiddleware);
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
