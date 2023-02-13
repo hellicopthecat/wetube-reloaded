@@ -27,8 +27,9 @@ app.use(
     session과 session id는 브라우저를 기억하는 방식 중 하나.
     */
     secret: "what",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
+    // 세션이 새로 만들어지고 수정된 적이 없을 때 Unitialized(초기화되지 않은)
     store: MongoStore.create({mongoUrl: `mongodb://127.0.0.1:27017/wetube`}),
   })
 );
@@ -36,6 +37,9 @@ app.use(
 // 주의사항으론 서버에 저장되는 default session storage는 memory store고 실제 사용하기 위해 있는것은 아니다.
 // 그래서 우리는 session store를 사용해야 한다. 문서를 확인해서 설치 할것을 찾아야한다.
 // 현재 mongoDB를 사용하기 때문에 connect-mongo를 설치해준다. 설치후 import하고 mongoDB와 연결해 session스토어를 만들어준다.
+
+// 브라우저에 들어오는 사람마다 cookie를 줄 필요가 없다. 내가 기억하고 싶은 사용자, 즉 로그인 한 사용자에 대해서만 쿠키를 주려면
+// resave와 saveUninitialized를 false로 한다.
 
 // app.use((req, res, next) => {
 //   console.log(res);
