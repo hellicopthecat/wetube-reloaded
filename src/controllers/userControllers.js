@@ -101,24 +101,43 @@ export const postLogin = async (req, res) => {
       errorMessage: "Password is Wrong",
     });
   }
-  /* // [3] 로그인으로 인한 cookie와 session의 분배
-    // user를 기억하기 위해서는 cookie를 주어야한다. cookie를 이해하기 위해서는 먼저 session을 알아야하는데
-    // session은 browser와 back-end 사이의 memory, history같은 것이다.
-    // 이것이 작동하려면 browser와 back-end가 서로에 대한 정보를 가지고 있어야 한다.
-    // 왜냐하면 로그인 페이지에서 http 요청을 하면 요청이 처리되고 끝나는데, 이때 back-end는 아무것도 할수 없다.
-    // 즉, 요청을 받고 처리를 끝내면 서버는 누가 요청을 보냈는지 잊어버리고 서버가 더이상 필요는 브라우저도 잊음.
-    // 이것을 stateless(무상태)라고 한다.
-    // 그래서 우리는 유저에게 유저가 백엔드에 뭔가 요청 할 때마다 누가 요청하는 알수 있게 어떤 정보를 남겨줘야한다.
-    // 유저에게 텍스트를 주는 이것을 쿠키...
-    // express-session이라는 것을 설치해야하는데 이 middlewear는 express에서 세션을 처리할수 있게 한다.
-    // 이것을 server.js에 import 한다. session 설정은 server.js에 기술
-  */
+  // [3] 로그인으로 인한 cookie와 session의 분배
+  // user를 기억하기 위해서는 cookie를 주어야한다. cookie를 이해하기 위해서는 먼저 session을 알아야하는데
+  // session은 browser와 back-end 사이의 memory, history같은 것이다.
+  // 이것이 작동하려면 browser와 back-end가 서로에 대한 정보를 가지고 있어야 한다.
+  // 왜냐하면 로그인 페이지에서 http 요청을 하면 요청이 처리되고 끝나는데, 이때 back-end는 아무것도 할수 없다.
+  // 즉, 요청을 받고 처리를 끝내면 서버는 누가 요청을 보냈는지 잊어버리고 서버가 더이상 필요는 브라우저도 잊음.
+  // 이것을 stateless(무상태)라고 한다.
+  // 그래서 우리는 유저에게 유저가 백엔드에 뭔가 요청 할 때마다 누가 요청하는 알수 있게 어떤 정보를 남겨줘야한다.
+  // 유저에게 텍스트를 주는 이것을 쿠키...
+  // express-session이라는 것을 설치해야하는데 이 middlewear는 express에서 세션을 처리할수 있게 한다.
+  // 이것을 server.js에 import 한다. session 설정은 server.js에 기술
 
   /* // [4] 유저가 로그하면 그 유저에 대한 정보를 세션에 담을거다 
-// 각 유저마다 서로 다른 req.session object를 가지고 있다는걸 기억하자 */
+  // 각 유저마다 서로 다른 req.session object를 가지고 있다는걸 기억하자 */
   req.session.loggedIn = true;
   req.session.user = user;
   // 이렇게 하면 세션에 정보를 추가한다.
   // session에 loggedIn을 true로 저장했고 user는 usermodel에서 찾은 user를 추가했다.
   return res.redirect("/");
 };
+
+export const githubLogin = (req, res) => {
+  // 소셜미디어 로그인 구현
+  //https://github.com/login/oauth/authorize?client_id=CLIENT_ID&scope=user:email%20read:user
+  const baseUrl = "https://github.com/login/oauth/authorize";
+  // 사용자를 깃헙으로 redirect 시켜야한다.
+  const config = {
+    client_id: process.env.CLIENT_ID,
+    allow_signup: false,
+    scope: "read:user user:email",
+    //scope는 유저에게서 얼마나 많이 정보를 읽어내고 어떤 정보를 가져올 것에 대한 것.
+    //필요한 정보만 요청하도록 해야함
+    //githb Oauth문서 참조 , 같은 파라미터를 써야한다.
+  };
+  const params = new URLSearchParams(config).toString();
+  // 파라미터에 들어갈 문장을 URLSearchParams(config)를 .toString()을 통해 문장으로 변형
+  const finalUrl = `${baseUrl}?${params}`;
+  return res.redirect(finalUrl);
+};
+export const postGithubLogin = (req, res) => {};
