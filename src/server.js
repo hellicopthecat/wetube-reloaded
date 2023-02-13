@@ -41,7 +41,10 @@ app.use(
     // 세션이 새로 만들어지고 수정된 적이 없을 때 Unitialized(초기화되지 않은)
     store: MongoStore.create({mongoUrl: process.env.DB_URL}),
     // url도 보호 되어야한다.
-    //.env 파일을 사용하기 위해서는 process.env.***으로 사용되어야한다.
+    //.env 파일을 사용하기 위해서는 dotenv를 설치하고 import를 해주어야하는데 이때 import의 위치는
+    //가능한 제일 빨리 import될 수 있게 작성해야한다. 그 기준은 package.json을 통해 볼 수 있다.
+    //require을 쓰게 된다면 모든 파일에 작성을 해야한다. import는 선언문이라 hosting이 되고 require은 표현식이라 import보다 늦게 호출된다.
+    // init에 dotenv/config를 바로 불러온다. process.env.***으로 사용되어야한다.
   })
 );
 // session data는 쿠키 안에 저장이 되지 않는다. session data는 서버 쪽에 저장이 된다.
