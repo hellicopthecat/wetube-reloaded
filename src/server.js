@@ -26,11 +26,22 @@ app.use(
     현재 파일을 저장하게 되면 새로 쿠키를 받게 됨. 나중에 백엔드가 잊지 않도록 세션을 mongoDB와 연결함.
     session과 session id는 브라우저를 기억하는 방식 중 하나.
     */
-    secret: "what",
+    secret: process.env.COOKIE_SECRET,
+    // secret은 우리가 쿠키에대해 sign 할 때 사용하는 String이다. 쿠키에 sign하는 이유는 우리의 backend가 쿠키를 줬다는걸 보여주기 위함이다.
+    // 이것을 잘 보호해야 하는데 , 누군가 쿠키를 훔쳐 마치 나인 척 할 수 있다. 이런건 길게 작성되고 강력하고 무작위로 만들어야 한다.
+    // domain은 이 쿠키를 만든 backend가 누군지 알려준다.
+    // expires는 쿠키의 만료 날짜를 명시를 나타냄 max-age는 언제 세션이 만료되는지 알려준다. 이것을 조정할 수 있는데 아래 참조
+    // cookie: {
+    //   maxAge: 20000,
+    //   // 1/1000초
+    // },
+
     resave: false,
     saveUninitialized: false,
     // 세션이 새로 만들어지고 수정된 적이 없을 때 Unitialized(초기화되지 않은)
-    store: MongoStore.create({mongoUrl: `mongodb://127.0.0.1:27017/wetube`}),
+    store: MongoStore.create({mongoUrl: process.env.DB_URL}),
+    // url도 보호 되어야한다.
+    //.env 파일을 사용하기 위해서는 process.env.***으로 사용되어야한다.
   })
 );
 // session data는 쿠키 안에 저장이 되지 않는다. session data는 서버 쪽에 저장이 된다.

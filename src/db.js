@@ -2,7 +2,7 @@
 
 import mongoose from "mongoose";
 mongoose.set("strictQuery", false);
-mongoose.connect(`mongodb://127.0.0.1:27017/wetube`);
+mongoose.connect(process.env.DB_URL);
 
 // 연결 후 성공 여부 에러 디버그 출력
 
