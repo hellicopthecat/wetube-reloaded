@@ -140,4 +140,30 @@ export const githubLogin = (req, res) => {
   const finalUrl = `${baseUrl}?${params}`;
   return res.redirect(finalUrl);
 };
-export const postGithubLogin = (req, res) => {};
+export const postGithubLogin = async (req, res) => {
+  //Github에서 받은 토큰을 access토큰으로 바꿔줘야한다.
+  const baseUrl = "https://github.com/login/oauth/access_token";
+  const config = {
+    client_id: process.env.CLIENT_ID,
+    client_secret: process.env.CLIENT_SECRET,
+    code: req.query.code,
+    // 토큰을 액세스하기위한 필수요소들을 넣어준다.
+    // code는 요청한 주소의 code를 불러와준다.
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  // log in 과 join 과 달리 redirect를 해주는 것이 아닌 post request를 보내기만 할 것이다.
+  // 여기서는 fetch문을 사용할 것이다.
+  const data = await fetch(finalUrl, {
+    //우선 fetch를 통해 데이터를 받아오고
+    method: "POST",
+    headers: {
+      Accept: "application / json",
+      //JSON을 return받기 위해 위 headers에 작성한 것을 잊으면 안된다.
+      //mdn fetch문서 참조
+    },
+  });
+  const json = await data.json();
+  // 그 데이터에서 JSON을 추출할것이다.
+  console.log(json);
+};
