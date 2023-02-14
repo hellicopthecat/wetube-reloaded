@@ -11,3 +11,21 @@ export const localsMiddleware = (req, res, next) => {
   res.locals.siteName = "Wetube";
   next();
 };
+
+export const protectMiddleWare = (req, res, next) => {
+  //여기에는 사용자가 로그인을 확인하고 로그인이 돼 있지 않을 경우 로그인 페이지로 Redirect 시킬것이다.
+  if (req.session.loggedIn) {
+    return next();
+  } else {
+    return res.redirect("/login");
+  }
+};
+
+export const publicOnly = (req, res, next) => {
+  //여기는 사용자가 loggedin 돼있지 않으면요청을 계속 하고 로그인이 돼엇을때 "/"로 redirect
+  if (!req.session.loggedIn) {
+    return next();
+  } else {
+    return res.redirect("/");
+  }
+};

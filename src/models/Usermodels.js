@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 const userSchema = new mongoose.Schema({
   username: {type: String, minlength: 4, required: true, unique: true},
   email: {type: String, required: true, unique: true},
-  password: {type: String, minlength: 4},
+  password: {type: String},
   //소셜로그인하는 과정에서 password가 데이터로 넘오지 않기때문에 required true를 하면 안된다.
   checkpass: {type: String, minlength: 4},
   name: {type: String, required: true},

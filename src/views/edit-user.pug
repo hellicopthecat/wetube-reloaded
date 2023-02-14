@@ -1,0 +1,13 @@
+extends base
+
+block contents
+    if errorMessage 
+        span=errorMessage
+    form(method="POST")
+        //- Middleware 에서 지정했음으로 각 input의 value값을 가져올수 있다.
+        input(name="username" type="text" placeholder="Insert your ID" value=loggedInUser.username minlength=4 required)
+        input(name="email" type="email" placeholder="E-mail" value=loggedInUser.email required)
+        input(name="name" type="text" placeholder="Your Name" value=loggedInUser.name required)
+        input(name="location" type="text" placeholder="Your Location" value=loggedInUser.location)
+        input(type="submit" value="Update Profile")
+        input(type="button" value="CANCEL" onclick="location.href=`/`")
