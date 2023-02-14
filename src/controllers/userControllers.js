@@ -82,7 +82,7 @@ export const postLogin = async (req, res) => {
   const {username, password} = req.body;
   const pageTitle = "Log In";
   // [1] account의 존재(exists)
-  const user = await UserModel.findOne({username});
+  const user = await UserModel.findOne({username, githubId: false});
   if (!user) {
     return res.status(400).render("login", {
       pageTitle,
@@ -209,21 +209,17 @@ export const postGithubLogin = async (req, res) => {
     }
     // 여기는 동일한 user email은 갖고 있지만 한명은 password로 로그인하고 다른 하나는 github로 로그인하는 user를 어떻게 다룰지
     // 만약 primary인 email을 받고 데이터베이스에서 같은 email을 가진 user를 발견하면 그 user들을 로그인 시켜줄것이다.
-    const existingUser = await UserModel.findOne({email: emailObj.email});
-    if (existingUser) {
+    let user = await UserModel.findOne({email: emailObj.email});
+    if (!user) {
       //만약 해당 email을 가진 user가 data에 이미 있다면, 로그인 시킬것이다.
-      req.session.loggedIn = true;
-      req.session.user = existingUser;
-      return res.redirect("/");
-    } else {
-      // create account
-      const user = await UserModel.create({
+      user = await UserModel.create({
         username: userData.login,
         email: emailObj.email,
         password: "",
         name: userData.name,
         location: userData.location,
         githubId: true,
+        avatarUrl: userData.avatar_url,
       });
       req.session.loggedIn = true;
       req.session.user = user;
@@ -232,4 +228,9 @@ export const postGithubLogin = async (req, res) => {
   } else {
     return res.redirect("/login");
   }
+};
+
+export const logout = (req, res) => {
+  req.session.destroy();
+  return res.redirect("/");
 };

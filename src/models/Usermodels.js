@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   name: {type: String, required: true},
   location: String,
   githubId: {type: Boolean, default: false},
+  avatarUrl: {type: String},
 });
 
 userSchema.pre("save", async function () {

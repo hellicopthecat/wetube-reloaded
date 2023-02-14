@@ -18,7 +18,7 @@ html(lang="en")
                         a(href="/search") Search
                     if loggedIn
                         li 
-                            a(href="/logout") Log Out
+                            a(href="/users/logout") Log Out
                         li 
                             a(href="/my-profile") #{loggedInUser.name}의 Profile
                     //- pug는 session에 대한 접근이 불가하다. 따라서 locals를 사용해서 변수를 만들면 된다.
