@@ -183,15 +183,52 @@ export const postGithubLogin = async (req, res) => {
   if ("access_token" in tokenRequest) {
     // access api
     const {access_token} = tokenRequest;
-    const userRequest = await (
-      await fetch("https://api.github.com/user", {
+    const apiUrl = "https://api.github.com";
+    const userData = await (
+      await fetch(`${apiUrl}/user`, {
         headers: {
           Authorization: `token ${access_token}`,
         },
       })
     ).json();
-    console.log(userRequest);
+    console.log(userData);
     //[5] 위의 디버깅으로 토대로 user의 info를 가져올수 있지만 email이 null이 되었다. 이는 email이 없거나 private라는 뜻이다.
+    // email data를 가져오기 위해 github - rest api - email 관련 참고
+    const emailData = await (
+      await fetch(`${apiUrl}/user/emails`, {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+    const emailObj = emailData.find(
+      (email) => email.primary === true && email.verified === true
+    );
+    if (!emailObj) {
+      return res.redirect("/login");
+    }
+    // 여기는 동일한 user email은 갖고 있지만 한명은 password로 로그인하고 다른 하나는 github로 로그인하는 user를 어떻게 다룰지
+    // 만약 primary인 email을 받고 데이터베이스에서 같은 email을 가진 user를 발견하면 그 user들을 로그인 시켜줄것이다.
+    const existingUser = await UserModel.findOne({email: emailObj.email});
+    if (existingUser) {
+      //만약 해당 email을 가진 user가 data에 이미 있다면, 로그인 시킬것이다.
+      req.session.loggedIn = true;
+      req.session.user = existingUser;
+      return res.redirect("/");
+    } else {
+      // create account
+      const user = await UserModel.create({
+        username: userData.login,
+        email: emailObj.email,
+        password: "",
+        name: userData.name,
+        location: userData.location,
+        githubId: true,
+      });
+      req.session.loggedIn = true;
+      req.session.user = user;
+      return res.redirect("/");
+    }
   } else {
     return res.redirect("/login");
   }
