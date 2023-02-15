@@ -21,7 +21,7 @@ export const protectMiddleWare = (req, res, next) => {
   }
 };
 
-export const publicOnly = (req, res, next) => {
+export const publicOnlyMiddleware = (req, res, next) => {
   //여기는 사용자가 loggedin 돼있지 않으면요청을 계속 하고 로그인이 돼엇을때 "/"로 redirect
   if (!req.session.loggedIn) {
     return next();
@@ -29,3 +29,5 @@ export const publicOnly = (req, res, next) => {
     return res.redirect("/");
   }
 };
+
+// 이 protect미들웨어는 userRouter videoRouter에 각각 추가 해야줘야한다. 나중에는 video model과 user model이 연결되기 때문이다.

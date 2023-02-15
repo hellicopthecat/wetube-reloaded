@@ -240,6 +240,63 @@ export const logout = (req, res) => {
 export const editUser = (req, res) => {
   return res.render("edit-user", {pageTitle: `Edit Profile`});
 };
-export const postEditUser = (req, res) => {
-  return res.redirect("/");
+export const postEditUser = async (req, res) => {
+  const {
+    session: {
+      user: {_id},
+    },
+    body: {username, email, name, location},
+  } = req;
+  // const id = req.session.user.id
+  // const {username, email, name, location} = req.body; 위와 같은 내용
+
+  const sessionId = req.session.username;
+  const sessionEmail = req.session.email;
+
+  if (username !== sessionId) {
+    const inspectUsername = Boolean(await UserModel.exists({username}));
+    if (inspectUsername)
+      return res.status(400).render("edit-user", {
+        pageTitle: `Edit Profile`,
+        errorMessage: "The Username is alreay taken",
+      });
+  }
+  if (email !== sessionEmail) {
+    const inspectEmail = Boolean(await UserModel.exists({email}));
+    if (inspectEmail)
+      return res.status(400).render("edit-user", {
+        pageTitle: `Edit Profile`,
+        errorMessage: "The Email is alreay taken",
+      });
+  }
+  const updatedUser = await UserModel.findByIdAndUpdate(
+    _id,
+    {
+      username,
+      email,
+      name,
+      location,
+      // 이렇게 업데이트를 했는데 안된다면 첫번째로는 불러올 대상을 잘못 선택했거나, session을 업데이트를 하지 않을 수도 있다.
+      //session은 DB와 연결이 되지 않았기 때문
+    },
+    {
+      new: true,
+    }
+  );
+  // 첫번째 방법
+  // req.session.user={
+  //   ...req.session.user
+  //   username,
+  //   email,
+  //   name,
+  //   location,
+  //
+  // }
+  // 두번째방법
+  // await UserModel에 상수를 지정하고 아래를 작성 변경하고 자하는 id의 위치에 new:true 작성
+  //mongoose문서참조
+  req.session.user = updatedUser;
+  //하지만 이미 있는 것들에 대한 부분들은 업데이트 할 수 없게 해야한다.
+
+  return res.redirect("/users/edit");
 };
