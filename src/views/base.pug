@@ -22,7 +22,7 @@ html(lang="en")
                         li 
                             a(href="/users/logout") Log Out
                         li 
-                            a(href="/my-profile") #{loggedInUser.name}의 Profile
+                            a(href=`/users/${loggedInUser._id}`) #{loggedInUser.name}의 Profile
                     //- pug는 session에 대한 접근이 불가하다. 따라서 locals를 사용해서 변수를 만들면 된다.
                     //- middleware.js를 만들고 변수 창출과 server에 use하도록 한다.
                     //- locals에 있는 loggedIn에 접근할 수 있다.

@@ -3,7 +3,13 @@ extends base
 block contents
     if errorMessage 
         span=errorMessage
-    form(method="POST")
+        //- multer설치후 form에 enctype="multipart/form-data" 꼭 작성 
+        //- 다음은 multer문서를 보고 middleware에 작성 
+    img(src="/"+loggedInUser.avatarUrl, width="100" height="100")
+    form(method="POST" enctype="multipart/form-data")
+        //- npm i multer 파일을 업로드 할 수 있게 도와준다
+        label(for="avatar") Avatar
+        input(name="avatar" type="file" id="avatar" accept="image/*")
         //- Middleware 에서 지정했음으로 각 input의 value값을 가져올수 있다.
         input(name="username" type="text" placeholder="Insert your ID" value=loggedInUser.username minlength=4 required)
         input(name="email" type="email" placeholder="E-mail" value=loggedInUser.email required)
@@ -11,3 +17,6 @@ block contents
         input(name="location" type="text" placeholder="Your Location" value=loggedInUser.location)
         input(type="submit" value="Update Profile")
         input(type="button" value="CANCEL" onclick="location.href=`/`")
+        if !loggedInUser.githubId
+            hr
+            a(href="change-password") Change Password &rarr;

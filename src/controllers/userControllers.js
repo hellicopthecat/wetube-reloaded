@@ -243,41 +243,50 @@ export const editUser = (req, res) => {
 export const postEditUser = async (req, res) => {
   const {
     session: {
-      user: {_id},
+      user: {_id, avatarUrl},
     },
     body: {username, email, name, location},
+    file,
   } = req;
+  // req.file multer 문서 참조
+  // console.log(file);
+
   // const id = req.session.user.id
   // const {username, email, name, location} = req.body; 위와 같은 내용
 
-  const sessionId = req.session.username;
-  const sessionEmail = req.session.email;
+  // const sessionId = req.session.username;
+  // const sessionEmail = req.session.email;
 
-  if (username !== sessionId) {
-    const inspectUsername = Boolean(await UserModel.exists({username}));
-    if (inspectUsername)
-      return res.status(400).render("edit-user", {
-        pageTitle: `Edit Profile`,
-        errorMessage: "The Username is alreay taken",
-      });
-  }
-  if (email !== sessionEmail) {
-    const inspectEmail = Boolean(await UserModel.exists({email}));
-    if (inspectEmail)
-      return res.status(400).render("edit-user", {
-        pageTitle: `Edit Profile`,
-        errorMessage: "The Email is alreay taken",
-      });
-  }
+  // if (username !== sessionId) {
+  //   const inspectUsername = Boolean(await UserModel.exists({username}));
+  //   if (inspectUsername)
+  //     return res.status(400).render("edit-user", {
+  //       pageTitle: `Edit Profile`,
+  //       errorMessage: "The Username is alreay taken",
+  //     });
+  // }
+  // if (email !== sessionEmail) {
+  //   const inspectEmail = Boolean(await UserModel.exists({email}));
+  //   if (inspectEmail)
+  //     return res.status(400).render("edit-user", {
+  //       pageTitle: `Edit Profile`,
+  //       errorMessage: "The Email is alreay taken",
+  //     });
+  // }
   const updatedUser = await UserModel.findByIdAndUpdate(
     _id,
     {
+      avatarUrl: file ? file.path : avatarUrl,
+      //업데이트 사항에 avatarUrl을 기입해고 유저가 파일을 보내지 않을 수 있어 확인시켜줘야한다.
+      //form에 file이 (?)있다면 req에 있는 file obj를 사용할수 있는거고 그말은 file.path가 존재한다는 것
+      //form에 file이 (:)없다면 avatarUrl은 기존과 같다. 기존 avatarUrlㅇㄹ 현재 로그인됀 유저로부터 가져온다.
+      //하지만 아직 브라우저가 이 파일이 존재하는지 모르니
       username,
       email,
       name,
       location,
       // 이렇게 업데이트를 했는데 안된다면 첫번째로는 불러올 대상을 잘못 선택했거나, session을 업데이트를 하지 않을 수도 있다.
-      //session은 DB와 연결이 되지 않았기 때문
+      //session은 DB와 연결이 되지 않았기 때문에 express 서버에 /upload로 가려고했다면 upload폴더의 내용을 보여주라고 지정해야함.
     },
     {
       new: true,
@@ -299,4 +308,56 @@ export const postEditUser = async (req, res) => {
   //하지만 이미 있는 것들에 대한 부분들은 업데이트 할 수 없게 해야한다.
 
   return res.redirect("/users/edit");
+};
+
+export const getchangePW = (req, res) => {
+  // 소셜로그인하는 사람들에게는 비밀번호를 받지 않아 변경할 필요가 없다. 따라서 아래와 같이 다른 곳으로 보내주거나
+  // view를 이용해 보지 못하게 하는 방법이 있다.
+  // if(req.session.user.githubId === true){
+  //   return res.redirect("/users/edit");
+  // }
+  return res.render("users/change-password", {pageTitle: "Change Password"});
+};
+export const postchangePW = async (req, res) => {
+  //현 세션에 user를 불러오기
+  const {
+    session: {
+      user: {_id, password},
+    },
+    body: {oldPW, newPW, checkpass},
+  } = req;
+  //비밀번호 변경시 에러발생
+  const ok = await bcrypt.compare(oldPW, password);
+  if (!ok) {
+    return res.status(400).render("users/change-password", {
+      pageTitle: "Change Password",
+      errorMessage: "The Current Password incorrect",
+    });
+  }
+  if (newPW !== checkpass) {
+    return res.status(400).render("users/change-password", {
+      pageTitle: "Change Password",
+      errorMessage: "The New Password and Checking Password are not Confirm",
+    });
+  }
+  //비밀번호를 변경
+  const user = await UserModel.findById(_id);
+  user.password = newPW;
+  await user.save();
+  //기존 비밀번호를 session에 있는 비밀번호와 비교해서 로그아웃이 안될수 있다. 변경후 세션에 알려줘 업데이트 해야한다.
+  req.session.user.password = user.password;
+  //비밀번호가 변경되었음을 알림
+
+  //변경후 로그아웃을 시키는데 세션이 남기 때문에 destroy시켜주는 것이 좋다.
+  req.session.destroy();
+  return res.redirect("/users/logout");
+};
+
+export const profile = async (req, res) => {
+  const {id} = req.params;
+  const user = await UserModel.findById(id);
+  if (!user) {
+    return res.status(404).render("404", {pageTitle: `User not Found`});
+  }
+  return res.render("users/profile", {pageTitle: `${user.name} Profile`, user});
 };

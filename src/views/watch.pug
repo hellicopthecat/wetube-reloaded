@@ -2,6 +2,7 @@ extends base
 
 block contents
     h3 #{video.title}
+    video(src="/"+video.fileUrl controls)
     span
         li=video.description
         li=video.createdAt

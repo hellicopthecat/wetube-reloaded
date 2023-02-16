@@ -1,3 +1,5 @@
+import multer from "multer";
+
 export const localsMiddleware = (req, res, next) => {
   // localsMiddleware 은 server의 session보다 나중에 있기 때문에 session에 접근할수 있다.
   // console.log(req.session.id);
@@ -31,3 +33,13 @@ export const publicOnlyMiddleware = (req, res, next) => {
 };
 
 // 이 protect미들웨어는 userRouter videoRouter에 각각 추가 해야줘야한다. 나중에는 video model과 user model이 연결되기 때문이다.
+
+// 작성후 해당 router post에 기능추가
+export const avatarUpload = multer({
+  dest: "uploads/avatars",
+  limits: {fieldSize: 3000000},
+});
+export const videoUpload = multer({
+  dest: "uploads/videos",
+  limits: {fieldSize: 10000000},
+});
