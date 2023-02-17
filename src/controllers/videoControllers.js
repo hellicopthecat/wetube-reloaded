@@ -1,4 +1,5 @@
 import VideoModel from "../models/Videomodels";
+import UserModel from "../models/Usermodels";
 
 export const home = async (req, res) => {
   const videos = await VideoModel.find({}).sort({createdAt: "desc"});
@@ -8,17 +9,23 @@ export const watch = async (req, res) => {
   // 내가요청한 파라미터 아이디
   const {id} = req.params;
   // mongoose에서 id를 통해 대상을 찾음
-  const video = await VideoModel.findById(id);
+  const video = await (await VideoModel.findById(id)).populate("owner");
+  // 아래 findbyid가 두번나와서 이것을 간소화 시킬 필요가 있다. populate 실제 user데이터로 채워준다
+  // const owner = await UserModel.findById(video.owner);
   if (!video) {
     return res.render("404", {pageTitle: "Wrong Access"});
   }
   return res.render("watch", {
     pageTitle: `watch ${video.title}`,
     video,
+    // owner,
   });
 };
 
 export const editVideo = async (req, res) => {
+  const {
+    user: {_id},
+  } = res.session;
   // 내가요청한 파라미터 아이디
   const {id} = req.params;
   // mongoose에서 id를 통해 대상을 찾음
@@ -26,10 +33,16 @@ export const editVideo = async (req, res) => {
   if (!video) {
     return res.status(404).render("404", {pageTitle: "Wrong Access"});
   }
+  if (String(video.owner) !== String(_id)) {
+    return res.status(403).redirect("/");
+  }
   return res.render("edit", {pageTitle: "Edit Video", video});
 };
 
 export const postEditVideo = async (req, res) => {
+  const {
+    user: {_id},
+  } = res.session;
   // 내가요청한 파라미터 아이디
   const {id} = req.params;
   const {title, description, createdAt, hashtags} = req.body;
@@ -45,6 +58,9 @@ export const postEditVideo = async (req, res) => {
   if (!video) {
     return res.status(404).render("404", {pageTitle: "Wrong Access"});
   }
+  if (String(video.owner) !== String(_id)) {
+    return res.status(403).redirect("/");
+  }
   await VideoModel.findByIdAndUpdate(id, {
     title,
     description,
@@ -59,16 +75,22 @@ export const uploadVideo = (req, res) => {
 };
 
 export const postUpload = async (req, res) => {
+  const {
+    user: {_id},
+  } = req.session;
   const file = req.file;
-  const {title, description, createdAt, hashtags} = req.body;
+  const {title, description, hashtags} = req.body;
   try {
-    await VideoModel.create({
+    const newVideo = await VideoModel.create({
       title,
       description,
-      createdAt,
       fileUrl: file.path,
+      owner: _id,
       hashtags: VideoModel.formatHashtags(hashtags),
     });
+    const user = await UserModel.findById(_id);
+    user.videos.push(newVideo._id);
+    user.save();
     return res.redirect("/");
   } catch (error) {
     return res.status(400).render("upload", {
@@ -83,7 +105,17 @@ export const deleteVideo = (req, res) => {
 };
 
 export const postDelete = async (req, res) => {
+  const {
+    user: {_id},
+  } = req.session;
   const {id} = req.params;
+  const video = await VideoModel.findById(id);
+  if (!video) {
+    return res.status(404).render("404", {pageTitle: "Wrong Access"});
+  }
+  if (String(video.owner) !== String(_id)) {
+    return res.status(403).redirect("/");
+  }
   await VideoModel.findByIdAndDelete(id);
   return res.redirect("/");
 };

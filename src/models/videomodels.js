@@ -10,6 +10,12 @@ const videoSchema = new mongoose.Schema({
     rate: {type: Number, default: 0, required: true},
     view: {type: Number, default: 0, required: true},
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "user",
+  },
+  //reference를 추가할건데 그 이유는 'mongoose'에게 owner에 id를 저장하겠다고 알려줘야하기때문
 });
 
 videoSchema.static("formatHashtags", function (hashtags) {

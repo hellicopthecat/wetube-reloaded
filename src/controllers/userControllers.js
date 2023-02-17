@@ -1,4 +1,5 @@
 import UserModel from "../models/Usermodels";
+import VideoModel from "../models/Videomodels";
 import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
@@ -355,9 +356,14 @@ export const postchangePW = async (req, res) => {
 
 export const profile = async (req, res) => {
   const {id} = req.params;
-  const user = await UserModel.findById(id);
+  const user = await UserModel.findById(id).populate("videos");
+  console.log(user);
+
   if (!user) {
     return res.status(404).render("404", {pageTitle: `User not Found`});
   }
-  return res.render("users/profile", {pageTitle: `${user.name} Profile`, user});
+  return res.render("users/profile", {
+    pageTitle: `${user.name} Profile`,
+    user,
+  });
 };

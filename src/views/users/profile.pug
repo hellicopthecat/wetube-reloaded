@@ -1,4 +1,8 @@
 extends ../base
+include ../mixins/mixins
 
 block contents 
-    h1 hello
+    each video in user.videos
+        +videoList(video)
+    else 
+        p "Video Not Found"

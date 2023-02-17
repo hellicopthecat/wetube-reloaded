@@ -3,14 +3,18 @@ extends base
 block contents
     h3 #{video.title}
     video(src="/"+video.fileUrl controls)
-    span
-        li=video.description
-        li=video.createdAt
+    br
+    small Uploaded by 
+        a(href=`/users/${video.owner._id}`) #{video.owner.name}
+    div
+        p=video.description
+        small=video.createdAt
         li=video.hashtags
-        li  Views #{video.view}
-        li  Rating #{video.rate} / 5
-       
-    br
-    a(href=`/videos/${video.id}/edit`) Edit Video &rarr; 
-    br
-    a(href=`/videos/${video.id}/delete`) Delete Video &rarr;
+        small  Views #{video.view}
+        small  Rating #{video.rate} / 5
+    
+    if String(video.owner._id) === String(loggedInUser._id)
+        br
+        a(href=`/videos/${video.id}/edit`) Edit Video &rarr; 
+        br
+        a(href=`/videos/${video.id}/delete`) Delete Video &rarr;
