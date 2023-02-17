@@ -62,6 +62,7 @@ app.use(
 app.use(localsMiddleware);
 //static은 내가 노출시키고 싶은 폴더를 지칭할수있다.
 app.use("/uploads", express.static("uploads"));
+app.use("/assets", express.static("assets"));
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
