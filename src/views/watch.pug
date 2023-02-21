@@ -1,20 +1,37 @@
 extends base
 
 block contents
-    h3 #{video.title}
-    video(src="/"+video.fileUrl controls)
-    br
-    small Uploaded by 
-        a(href=`/users/${video.owner._id}`) #{video.owner.name}
-    div
-        p=video.description
-        small=video.createdAt
-        li=video.hashtags
-        small  Views #{video.view}
-        small  Rating #{video.rate} / 5
-    
-    if String(video.owner._id) === String(loggedInUser._id)
-        br
-        a(href=`/videos/${video.id}/edit`) Edit Video &rarr; 
-        br
-        a(href=`/videos/${video.id}/delete`) Delete Video &rarr;
+    div.watch
+        div#videoContainer(data-Id=video._id)
+            video(src="/"+video.fileUrl)
+            div#videoControls
+                button
+                    i#play.fa-solid.fa-play 
+                div.time
+                    span#currentTime 00:00:00
+                    span  | 
+                    span#totalTime 00:00:00
+                input#timeline(type="range" step="1" value=0 min="0" max="")
+                input#volume(type="range" step="0.1" value="0.5" min="0" max="1")
+                button 
+                    i#mute.fa-solid.fa-volume-high
+                div 
+                    button#fullScreen.fas.fa-maximize
+        div.watch_data
+            div.watch_meta
+                h3 #{video.title}
+                small Uploaded by 
+                    a(href=`/users/${video.owner._id}`) #{video.owner.name}
+                p=video.description
+                small=video.createdAt
+                li=video.hashtags
+                small  #{video.meta.view} #{video.meta.view === 1? "view":"views"}
+                small  Rating #{video.rate} / 5
+            div.watch_owner-menu
+                if String(video.owner._id) === String(loggedInUser._id)
+                    br
+                    a(href=`/videos/${video.id}/edit`) Edit Video &rarr; 
+                    br
+                    a(href=`/videos/${video.id}/delete`) Delete Video &rarr;
+block scripts
+    script(src="/assets/js/videoPlayer.js") 

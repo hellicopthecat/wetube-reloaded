@@ -1,0 +1,17 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 50px;
+  margin-bottom: 80px;
+  .logo {
+    font-size: 40px;
+    color: $red;
+  }
+  ul {
+    display: flex;
+    li {
+      margin-right: 100px;
+    }
+  }
+}

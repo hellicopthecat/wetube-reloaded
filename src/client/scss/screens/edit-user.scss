@@ -1,0 +1,13 @@
+.edit-user {
+  display: flex;
+  justify-content: space-around;
+  img {
+    width: 30%;
+    height: 30%;
+    border-radius: 50%;
+    margin-right: 80px;
+  }
+  form {
+    width: 100%;
+  }
+}

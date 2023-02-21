@@ -1,6 +1,6 @@
 extends base
 
 block contents 
-    form(method="POST")
-        input(type="submit" value="Delete Video")
-        input(type="button" value="CANCEL" onclick="location.href=`/`")
+    form.form(method="POST")
+        input.input_submit(type="submit" value="Delete Video")
+        input.input_cancel(type="button" value="CANCEL" onclick="location.href=`/`")

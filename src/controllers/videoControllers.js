@@ -2,14 +2,16 @@ import VideoModel from "../models/Videomodels";
 import UserModel from "../models/Usermodels";
 
 export const home = async (req, res) => {
-  const videos = await VideoModel.find({}).sort({createdAt: "desc"});
+  const videos = await VideoModel.find({})
+    .sort({createdAt: "desc"})
+    .populate("owner");
   return res.render("home", {pageTitle: "Home", videos});
 };
 export const watch = async (req, res) => {
   // 내가요청한 파라미터 아이디
   const {id} = req.params;
   // mongoose에서 id를 통해 대상을 찾음
-  const video = await (await VideoModel.findById(id)).populate("owner");
+  const video = await VideoModel.findById(id).populate("owner");
   // 아래 findbyid가 두번나와서 이것을 간소화 시킬 필요가 있다. populate 실제 user데이터로 채워준다
   // const owner = await UserModel.findById(video.owner);
   if (!video) {
@@ -25,7 +27,7 @@ export const watch = async (req, res) => {
 export const editVideo = async (req, res) => {
   const {
     user: {_id},
-  } = res.session;
+  } = req.session;
   // 내가요청한 파라미터 아이디
   const {id} = req.params;
   // mongoose에서 id를 통해 대상을 찾음
@@ -42,11 +44,11 @@ export const editVideo = async (req, res) => {
 export const postEditVideo = async (req, res) => {
   const {
     user: {_id},
-  } = res.session;
+  } = req.session;
   // 내가요청한 파라미터 아이디
   const {id} = req.params;
-  const {title, description, createdAt, hashtags} = req.body;
-  console.log(req.body);
+  const {title, description, hashtags} = req.body;
+  // console.log(req.body);
   // post 후 찾는 대상
   const video = await VideoModel.exists({_id: id});
   // post에서는 findById를 통한 전체적인 video를 찾을 필요가 없다. 따라서
@@ -64,7 +66,6 @@ export const postEditVideo = async (req, res) => {
   await VideoModel.findByIdAndUpdate(id, {
     title,
     description,
-    createdAt,
     hashtags: VideoModel.formatHashtags(hashtags),
   });
   return res.redirect(`/videos/${id}`);
@@ -78,13 +79,13 @@ export const postUpload = async (req, res) => {
   const {
     user: {_id},
   } = req.session;
-  const file = req.file;
+  const {path: fileUrl} = req.file;
   const {title, description, hashtags} = req.body;
   try {
     const newVideo = await VideoModel.create({
       title,
       description,
-      fileUrl: file.path,
+      fileUrl,
       owner: _id,
       hashtags: VideoModel.formatHashtags(hashtags),
     });
@@ -138,4 +139,15 @@ export const search = async (req, res) => {
     });
   }
   res.render("search", {pageTitle: "SEARCH", videofind});
+};
+
+export const registerView = async (req, res) => {
+  const {id} = req.params;
+  const video = await VideoModel.findById(id);
+  if (!video) {
+    return res.sendStatus(404);
+  }
+  video.meta.view = video.meta.view + 1;
+  await video.save();
+  return res.sendStatus(200);
 };

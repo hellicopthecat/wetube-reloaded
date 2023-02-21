@@ -2,11 +2,12 @@ extends base
 include mixins/mixins
 
 block contents 
-    form(method="GET")
-        input(name="keyword" type="text" placeholder="Input to Search")
-        input(type="submit" value="Search")
-        input(type="button" value="CANCEL" onclick="location.href=`/`")
-    div
+    form.form(method="GET")
+        input.input_text(name="keyword" type="text" placeholder="Input to Search")
+        input.input_submit(type="submit" value="Search")
+        input.input_cancel(type="button" value="CANCEL" onclick="location.href=`/`")
+    hr
+    div.search_result
         each video in videofind
             +videoList(video)
         else 

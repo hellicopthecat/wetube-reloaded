@@ -1,13 +1,13 @@
 extends base
 
 block contents 
-    h2 Update Video
+    h2 #{pageTitle}
     if errorMessage 
         span=errorMessage
-    form(method="POST")
-        input(name="title" type="text" placeholder=" VIDEO TITLE " maxlength=20 value=video.title required)
-        input(name="description" type="text" placeholder=" Description Video" minlength=10 value=video.description required)
-        input(name="createAt" type="text" placeholder="Write on Create At" value=video.createdAt required)
-        input(name="hashtags" type="text" placeholder="Split by Comma" value=video.hashtags.join() required)
-        input(type="submit" value="SAVE")
-        input(type="button" value="CANCEL" onclick="location.href=`/`")
+    form.form(method="POST")
+        input.input_text(name="title" type="text" placeholder=" VIDEO TITLE " maxlength=20 value=video.title required)
+        input.input_text(name="description" type="text" placeholder=" Description Video" minlength=10 value=video.description required)
+        input.input_text(name="createAt" type="text" placeholder="Write on Create At" value=video.createdAt required)
+        input.input_text(name="hashtags" type="text" placeholder="Split by Comma" value=video.hashtags.join() required)
+        input.input_submit(type="submit" value="SAVE")
+        input.input_cancel(type="button" value="CANCEL" onclick="location.href=`/`")

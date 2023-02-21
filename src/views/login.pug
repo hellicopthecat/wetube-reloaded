@@ -3,11 +3,11 @@ extends base
 block contents 
     if errorMessage 
         span=errorMessage
-    form(method="POST")
-        input(name="username" type="text" placeholder="Insert your ID" minlength=4 required)
-        input(name="password" type="password" placeholder="password" minlength=4 required)
-        input(type="submit" value="Log In")
-        input(type="button" value="CANCEL" onclick="location.href=`/`")
+    form.form(method="POST")
+        input.input_text(name="username" type="text" placeholder="Insert your ID" minlength=4 required)
+        input.input_text(name="password" type="password" placeholder="password" minlength=4 required)
+        input.input_submit(type="submit" value="Log In")
+        input.input_cancel(type="button" value="CANCEL" onclick="location.href=`/`")
     br
     a(href="/users/github/start") Login with Github &rarr;
     br

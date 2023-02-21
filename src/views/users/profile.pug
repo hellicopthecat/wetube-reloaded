@@ -2,7 +2,8 @@ extends ../base
 include ../mixins/mixins
 
 block contents 
-    each video in user.videos
-        +videoList(video)
-    else 
-        p "Video Not Found"
+    ul.video_grid
+        each video in user.videos
+            +videoList(video)
+        else 
+            p "Video Not Found"

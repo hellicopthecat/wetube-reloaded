@@ -3,11 +3,11 @@ extends base
 block contents
     if errorMessage 
         span=errorMessage
-    form(method="POST" enctype="multipart/form-data")
+    form.form(method="POST" enctype="multipart/form-data")
             label(for="video") Upload Video 
             input(name="video" type="file" id="video" accept="video/*" required)
-            input(name="title" type="text" placeholder=" VIDEO TITLE " maxlength=20 required)
-            input(name="description" type="text" placeholder=" Description Video" minlength=10 required)
-            input(name="hashtags" type="text" placeholder="Split by Comma"  required)
-            input(type="submit" value="SAVE")
-            input(type="button" value="CANCEL" onclick="location.href=`/`")
+            input.input_text(name="title" type="text" placeholder=" VIDEO TITLE " maxlength=20 required)
+            input.input_text(name="description" type="text" placeholder=" Description Video" minlength=10 required)
+            input.input_text(name="hashtags" type="text" placeholder="Split by Comma"  required)
+            input.input_submit(type="submit" value="SAVE")
+            input.input_cancel(type="button" value="CANCEL" onclick="location.href=`/`")

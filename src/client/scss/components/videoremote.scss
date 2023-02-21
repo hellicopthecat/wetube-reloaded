@@ -1,0 +1,44 @@
+#videoContainer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  #videoControls {
+    position: absolute;
+    bottom: 25px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: darkgray;
+    height: 30px;
+    padding: 0 15px;
+    margin: 0 auto;
+    border-radius: 25px;
+    white-space: nowrap;
+    opacity: 0;
+
+    transition: opacity 1s ease-in-out;
+    &.showing {
+      opacity: 1;
+    }
+
+    button {
+      background-color: inherit;
+      border: none;
+    }
+    *:not(div:last-child, :last-child) {
+      margin-right: 5px;
+    }
+    .time {
+      font-size: 10px;
+    }
+  }
+  #timeline {
+    width: 150px;
+    height: 5px;
+  }
+  #volume {
+    width: 15%;
+    height: 5px;
+  }
+}

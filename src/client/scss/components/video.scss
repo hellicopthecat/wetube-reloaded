@@ -1,0 +1,22 @@
+.video_list {
+  * {
+    margin-bottom: 20px;
+  }
+  h4 {
+    font-size: 30px;
+  }
+
+  .video_thumb {
+    width: 100%;
+    height: 150px;
+    background-color: blanchedalmond;
+    border-radius: 25px;
+  }
+  .video_data {
+    display: flex;
+    flex-direction: column;
+    ul {
+      display: flex;
+    }
+  }
+}

@@ -3,15 +3,15 @@ extends base
 block contents  
     if errorMessage 
         span=errorMessage
-    form(method="POST")
-        input(name="username" type="text" placeholder="Insert your ID" minlength=4 required)
-        input(name="email" type="email" placeholder="E-mail" required)
-        input(name="password" type="password" placeholder="password" minlength=4 required)
-        input(name="checkpass" type="password" placeholder="Checking password" minlength=4 required)
-        input(name="name" type="text" placeholder="Your Name" required)
-        input(name="location" type="text" placeholder="Your Location")
-        input(type="submit" value="JOIN")
-        input(type="button" value="CANCEL" onclick="location.href=`/`")
+    form.form(method="POST")
+        input.input_text(name="username" type="text" placeholder="Insert your ID" minlength=4 required)
+        input.input_text(name="email" type="email" placeholder="E-mail" required)
+        input.input_text(name="password" type="password" placeholder="password" minlength=4 required)
+        input.input_text(name="checkpass" type="password" placeholder="Checking password" minlength=4 required)
+        input.input_text(name="name" type="text" placeholder="Your Name" required)
+        input.input_text(name="location" type="text" placeholder="Your Location")
+        input.input_submit(type="submit" value="JOIN")
+        input.input_cancel(type="button" value="CANCEL" onclick="location.href=`/`")
     br
     div
         span Already have an account?

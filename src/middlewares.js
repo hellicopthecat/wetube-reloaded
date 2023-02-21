@@ -8,9 +8,9 @@ export const localsMiddleware = (req, res, next) => {
   }
   // res.locals.loggedIn = Boolean(req.session.loggedIn) 위와 같은 내용이다.
   // console.log(res.locals);
-  res.locals.loggedInUser = req.session.user;
-  // console.log(res.locals.loggedInUser);
   res.locals.siteName = "Wetube";
+  res.locals.loggedInUser = req.session.user || {};
+  // console.log(res.locals.loggedInUser);
   next();
 };
 
@@ -41,5 +41,5 @@ export const avatarUpload = multer({
 });
 export const videoUpload = multer({
   dest: "uploads/videos",
-  limits: {fieldSize: 10000000},
+  limits: {fieldSize: 15000000},
 });

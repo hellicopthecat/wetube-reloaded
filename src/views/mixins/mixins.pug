@@ -1,9 +1,13 @@
 mixin videoList(info)
-    h4
-        a(href=`/videos/${info.id}`) #{info.title}
-    p=info.description
-    ul      
-        each hashtags in info.hashtags
-            li=hashtags 
-    small=info.createdAt
-    hr 
+    div.video_list
+        a(href=`/videos/${info.id}`)
+            div.video_thumb
+            h4=info.title
+            p=info.description
+            div.video_data
+                ul      
+                    each hashtags in info.hashtags
+                        li=hashtags 
+                small=info.createdAt
+                span #{info.meta.view} #{info.meta.view === 1? "view":"views"}
+            hr 
