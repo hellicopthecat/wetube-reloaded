@@ -1,6 +1,9 @@
 extends base
 
 block contents
+    div 
+        video#preview
+        button#startBtn Start Recording
     if errorMessage 
         span=errorMessage
     form.form(method="POST" enctype="multipart/form-data")
@@ -11,3 +14,5 @@ block contents
             input.input_text(name="hashtags" type="text" placeholder="Split by Comma"  required)
             input.input_submit(type="submit" value="SAVE")
             input.input_cancel(type="button" value="CANCEL" onclick="location.href=`/`")
+block scripts 
+    script(src="../assets/js/recorder.js") 

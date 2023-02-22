@@ -36,6 +36,7 @@ export const editVideo = async (req, res) => {
     return res.status(404).render("404", {pageTitle: "Wrong Access"});
   }
   if (String(video.owner) !== String(_id)) {
+    req.flash("error", "NOT Authorized");
     return res.status(403).redirect("/");
   }
   return res.render("edit", {pageTitle: "Edit Video", video});

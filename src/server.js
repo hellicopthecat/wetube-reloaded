@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import session from "express-session";
+import flash from "express-flash";
 import MongoStore from "connect-mongo";
 import rootRouter from "./router/rootRouter";
 import videoRouter from "./router/videoRouter";
@@ -59,7 +60,7 @@ app.use(
 // app.use((req, res, next) => {
 //   console.log(res);
 // });
-
+app.use(flash());
 app.use(localsMiddleware);
 //static은 내가 노출시키고 싶은 폴더를 지칭할수있다.
 app.use("/uploads", express.static("uploads"));
