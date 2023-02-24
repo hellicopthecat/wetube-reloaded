@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import session from "express-session";
 import flash from "express-flash";
+import helmet from "helmet";
 import MongoStore from "connect-mongo";
 import rootRouter from "./router/rootRouter";
 import videoRouter from "./router/videoRouter";
@@ -20,7 +21,7 @@ app.use(morgan("dev"));
 
 // html 의 form의 value를 이해하고 우리가 쓸 수 있는 자바스크립트 형식으로 변형
 app.use(express.urlencoded({extended: true}));
-
+app.use(express.json());
 app.use(
   session({
     /* session 설명
@@ -37,16 +38,15 @@ app.use(
     //   maxAge: 20000,
     //   // 1/1000초
     // },
-
     resave: false,
     saveUninitialized: false,
     // 세션이 새로 만들어지고 수정된 적이 없을 때 Unitialized(초기화되지 않은)
     store: MongoStore.create({mongoUrl: process.env.DB_URL}),
-    // url도 보호 되어야한다.
-    //.env 파일을 사용하기 위해서는 dotenv를 설치하고 import를 해주어야하는데 이때 import의 위치는
-    //가능한 제일 빨리 import될 수 있게 작성해야한다. 그 기준은 package.json을 통해 볼 수 있다.
-    //require을 쓰게 된다면 모든 파일에 작성을 해야한다. import는 선언문이라 hosting이 되고 require은 표현식이라 import보다 늦게 호출된다.
-    // init에 dotenv/config를 바로 불러온다. process.env.***으로 사용되어야한다.
+    /*    url도 보호 되어야한다.
+    .env 파일을 사용하기 위해서는 dotenv를 설치하고 import를 해주어야하는데 이때 import의 위치는
+    가능한 제일 빨리 import될 수 있게 작성해야한다. 그 기준은 package.json을 통해 볼 수 있다.
+    require을 쓰게 된다면 모든 파일에 작성을 해야한다. import는 선언문이라 hosting이 되고 require은 표현식이라 import보다 늦게 호출된다.
+    init에 dotenv/config를 바로 불러온다. process.env.***으로 사용되어야한다. */
   })
 );
 // session data는 쿠키 안에 저장이 되지 않는다. session data는 서버 쪽에 저장이 된다.
@@ -61,12 +61,21 @@ app.use(
 //   console.log(res);
 // });
 app.use(flash());
+app.use(helmet.referrerPolicy({policy: "strict-origin-when-cross-origin"}));
 app.use(localsMiddleware);
 //static은 내가 노출시키고 싶은 폴더를 지칭할수있다.
 app.use("/uploads", express.static("uploads"));
 app.use("/assets", express.static("assets"));
 app.use("/", rootRouter);
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+  res.header("Cross-Origin-Opener-Policy", "same-origin");
+  res.header("Cross-Origin-Resource-Policy", "cross-origin");
+  // req.header("Access-Control-Allow-Origin", "*");
+  next();
+});
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
 app.use("/api", apiRouter);
+
 export default app;

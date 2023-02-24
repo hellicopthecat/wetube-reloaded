@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema({
   location: String,
   githubId: {type: Boolean, default: false},
   avatarUrl: String,
+  comments: [
+    {type: mongoose.Schema.Types.ObjectId, requied: true, ref: "Comment"},
+  ],
   videos: [{type: mongoose.Schema.Types.ObjectId, ref: "video"}],
 });
 

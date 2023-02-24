@@ -1,5 +1,6 @@
 import VideoModel from "../models/Videomodels";
 import UserModel from "../models/Usermodels";
+import Comment from "../models/Comment";
 
 export const home = async (req, res) => {
   const videos = await VideoModel.find({})
@@ -11,7 +12,9 @@ export const watch = async (req, res) => {
   // 내가요청한 파라미터 아이디
   const {id} = req.params;
   // mongoose에서 id를 통해 대상을 찾음
-  const video = await VideoModel.findById(id).populate("owner");
+  const video = await VideoModel.findById(id)
+    .populate("owner")
+    .populate("comments");
   // 아래 findbyid가 두번나와서 이것을 간소화 시킬 필요가 있다. populate 실제 user데이터로 채워준다
   // const owner = await UserModel.findById(video.owner);
   if (!video) {
@@ -80,13 +83,14 @@ export const postUpload = async (req, res) => {
   const {
     user: {_id},
   } = req.session;
-  const {path: fileUrl} = req.file;
+  const {video, thumb} = req.files;
   const {title, description, hashtags} = req.body;
   try {
     const newVideo = await VideoModel.create({
       title,
       description,
-      fileUrl,
+      fileUrl: video[0].path,
+      thumbUrl: thumb[0].path,
       owner: _id,
       hashtags: VideoModel.formatHashtags(hashtags),
     });
@@ -152,3 +156,31 @@ export const registerView = async (req, res) => {
   await video.save();
   return res.sendStatus(200);
 };
+
+export const createComment = async (req, res) => {
+  // const {id} = req.params;
+  // const {text} = req.body;
+  // const {user} = req.session
+  const {
+    session: {user},
+    body: {text},
+    params: {id},
+  } = req;
+  const video = await VideoModel.findById(id);
+  if (!video) {
+    return res.sendStatus(404);
+  }
+  const comment = await Comment.create({
+    text,
+    owner: user._id,
+    video: id,
+  });
+  video.comments.push(comment._id);
+  video.save();
+  return res.sendStatus(201);
+};
+// 댓글을 지우는 기능
+/* span x 클릭할때 fetch request를 보내서 댓그을 지우게 함
+유저가 댓글의 주인이 맞느지 댓글을 지우기 전에 확인
+모두에게 보이게 하면 안됨 작성자만이 자기것을 지우고 지우는 기능을 볼수 있게 해야함 템플릿을 적용해서 삭제버튼을 볼수 잇게 해햔다.
+ */

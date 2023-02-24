@@ -1,15 +1,19 @@
 import mongoose from "mongoose";
 
 const videoSchema = new mongoose.Schema({
-  title: {type: String, maxlength: 20, required: true},
+  title: {type: String, minlength: 5, required: true},
   fileUrl: {type: String, required: true},
-  description: {type: String, minlength: 10, required: true},
+  thumbUrl: {type: String, required: true},
+  description: {type: String, minlength: 5, required: true},
   createdAt: {type: Date, required: true, default: Date.now()},
   hashtags: [{type: String, trim: true}],
   meta: {
     rate: {type: Number, default: 0, required: true},
     view: {type: Number, default: 0, required: true},
   },
+  comments: [
+    {type: mongoose.Schema.Types.ObjectId, requied: true, ref: "Comment"},
+  ],
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

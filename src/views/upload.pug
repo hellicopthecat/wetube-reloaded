@@ -9,9 +9,11 @@ block contents
     form.form(method="POST" enctype="multipart/form-data")
             label(for="video") Upload Video 
             input(name="video" type="file" id="video" accept="video/*" required)
-            input.input_text(name="title" type="text" placeholder=" VIDEO TITLE " maxlength=20 required)
-            input.input_text(name="description" type="text" placeholder=" Description Video" minlength=10 required)
-            input.input_text(name="hashtags" type="text" placeholder="Split by Comma"  required)
+            label(for="thumb") Thumbnail File 
+            input(name="thumb" type="file" id="thumb" accept="image/*" required)
+            input.input_text(name="title" type="text" placeholder=" VIDEO TITLE " minlength=5 required)
+            input.input_text(name="description" type="text" placeholder=" Description Video" minlength=5 required)
+            input.input_text(name="hashtags" type="text" placeholder="Split by Comma")
             input.input_submit(type="submit" value="SAVE")
             input.input_cancel(type="button" value="CANCEL" onclick="location.href=`/`")
 block scripts 
