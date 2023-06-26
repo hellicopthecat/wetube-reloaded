@@ -57,6 +57,7 @@ const handleVolume = (event) => {
 
 const formatTime = (seconds) =>
   new Date(seconds * 1000).toISOString().substring(11, 19);
+
 const handleLoadedMeta = () => {
   totalTime.innerText = formatTime(Math.floor(video.duration));
   timeLine.max = Math.floor(video.duration);
